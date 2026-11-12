@@ -28,6 +28,17 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class ActionPayload(BaseModel):
+    """动作契约：动作名放在请求体顶层，重新绑定等补充字段放在 values 里。
+
+    之前前端把 action 放在顶层、后端却从 values 里读，两边对不上导致动作静默
+    不生效；这里把顶层 action 固化为契约，缺动作名直接 422，不再静默吞掉。
+    """
+
+    action: str = Field(min_length=1, description="要执行的动作名，如 提交生成")
+    values: dict[str, Any] = Field(default_factory=dict, description="动作携带的补充字段，如重新绑定的目标数据集")
+
+
 
 class QueryEntry(BaseModel):
     """查询语句明细结构。"""
